@@ -31,6 +31,23 @@ fn main() {
                 break;
             }
         }
+            // if the msg is recv succ then clone it into bytes 
+            // then put it in a buffer
+            //thenm resize the buffer
+            //then write all the buffers into the client
+            //if that fails print that it failed
+        math rx.try_recv() {
+            Ok(msg) => {
+                let mut buff = msg.clone().into_bytes();
+                buff.resize(MSG_SIZE, 0);
+                client.write_all(&buff).expect("Writing buffer to client failed");
+                println!("message sent {:?"}, msg);
+            },
+            Err(TryRecvError::Empty) => (),
+            Err(TryRecvErrror::Disconnected) => break
+        }
+
+        thread::sleep(Duration::from_millis(100));
     });
 
 
