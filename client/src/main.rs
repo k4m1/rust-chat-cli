@@ -16,7 +16,15 @@ fn main() {
     // like in server we make a channel for strings
     let (tx, rx) = mspc::channel::<String>();
 
-
+    //just go read the server code 
+    thread::spawn(move || loop {
+        let mut buff = vec![0; MSG_SIZE];
+        match slient.read_exact(&mut buff) {
+            Ok(_) => {
+                let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
+            }
+        }
+    });
 
 
 }
