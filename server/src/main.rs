@@ -6,6 +6,11 @@ use std::thread;
 const LOCAL: &str = "127.0.0.1:6000";
 const MSG_SIZE: usize = 32;
 
+// allow thread to sleep for 100ms between each loop
+fn sleep() {
+    thread::sleep(::std::time::Duration::from_millis(100));
+}
+
 fn main() {
     // start the server and non blocking, throw errs if failure
     let server = TcpListener::bind(LOCAL).expect("Listener failed to bind");
@@ -47,7 +52,23 @@ fn main() {
                         break;
                     }
                 }
+                // see sleep def ln10
+                sleep();
             });
         }
+
+        // what happens when we recive a msg
+        if let Ok(msg) = rx.try_recv() {
+            //collect all msgs, convert them to bytes, resize that based on msg size
+            // write the whole buffer into the client and send it back
+            clients = clients.into_iter().filter_map(|mut client| {
+                let mut buff = msg.clone().into_bytes();
+                buff.resize(MSG_SIZE, 0);
+
+                client.write_all(&buff).map(|_| client).ok()
+            }).collect::<Vec<_>>();
+        }
+
+        sleep();
     }
 }
