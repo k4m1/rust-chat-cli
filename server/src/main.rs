@@ -25,6 +25,21 @@ fn main() {
             let tx = tx.clone();
             // copy client to be pushed into thread
             clients.push(socket.try_clone().expect("failed to clone client"));
+
+            //create the thread and a mutable buff inside it and inside the buffer start a loop
+            // the buffer contains a vec with 0's and the $MSG_SIZE
+            thread::spawn(move || loop {
+                let mut buff = vec![0; MSG_SIZE];
+                // thus wull read our msg into the buffer
+                //convert the boi into an ittr
+                //take all non white space charcters and convert them into a real string
+                match socket.read_exact(&mut buff) {
+                    Ok(_) => {
+                        let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
+                        let msg = String::from_utf8(msg).expect("Invalid utf-8 msg")
+                    }
+                }
+            })
         }
     }
 }
