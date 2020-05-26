@@ -50,5 +50,13 @@ fn main() {
         thread::sleep(Duration::from_millis(100));
     });
 
-
+    // ask for input loop for input print or get out
+    println!("Say somthing:");
+    loop {
+        let mut buff = String::new();
+        io::stdin().read_line(&mut buff).expect("failed to read stdin");
+        let msg = buff.trim().to_string();
+        if msg == ":quit" || tx.send(msg).is_err() {break} 
+    }
+    println!("SMELL YA L8TR")
 }
