@@ -22,6 +22,13 @@ fn main() {
         match slient.read_exact(&mut buff) {
             Ok(_) => {
                 let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
+                println!("msg recv {:?}", msg);
+            },
+            // ifyou woulf get a wouldblock error sever the connection with the server and throw hands
+            Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
+            Err(_) => {
+                println!("Honetly if you get this one I dont know what happened")
+                break;
             }
         }
     });
