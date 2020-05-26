@@ -36,10 +36,18 @@ fn main() {
                 match socket.read_exact(&mut buff) {
                     Ok(_) => {
                         let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
-                        let msg = String::from_utf8(msg).expect("Invalid utf-8 msg")
+                        let msg = String::from_utf8(msg).expect("Invalid utf-8 msg");
+                        // yo who sent that if if it failed let me know
+                        println!( "{}: {:?}", addr, msg);
+                        tx.send(msg).expect("failed to send msg to rx");
+                    },
+                    Err(ref err) if er.kind() == ErrorKind::WouldBlock => (),
+                    Err(_) => {
+                        println("closing connection with: {}", addr);
+                        break;
                     }
                 }
-            })
+            });
         }
     }
 }
