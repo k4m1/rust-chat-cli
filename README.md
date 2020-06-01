@@ -1,1 +1,1 @@
-*Hello World
+This is a project that I made to better help me understand working in a CLI only enviroment as well as more complex rust functionality. Most of the code is commented but I am currently working on adding the code and comments to the wiki for ease of access.
